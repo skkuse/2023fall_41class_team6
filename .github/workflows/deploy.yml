@@ -22,7 +22,5 @@ jobs:
             git pull origin main
             npm install --force
             pm2 list
-            pm2 kill
-            pm2 list
-            pm2 start "npm run dev"
+            pm2 restart "npm run dev"
             pm2 list
