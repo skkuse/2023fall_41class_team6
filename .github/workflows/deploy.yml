@@ -21,5 +21,6 @@ jobs:
             cd 2023fall_41class_team6/frontend
             git pull origin main
             pm2 kill
-            npm install
-            pm2 start "npm run dev"
+            npm install --force
+            npm run build
+            pm2 start dist/main.js
