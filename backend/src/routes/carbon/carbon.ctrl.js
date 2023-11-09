@@ -3,9 +3,25 @@ const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
 var ip = require("ip");
+const { exec } = require('child_process');
+const { use } = require(".");
 
 // Carbonfootprint=energyneeded×carbonintensity
-// energy needed = runtime × power draw for cores × usage + power draw for memory × PUE ×PSF
+// energy needed = runtime × (power draw for cores × usage + power draw for memory) × PUE ×PSF
+
+// # Power needed, in Watt
+// powerNeeded_core = powerNeeded_CPU + powerNeeded_GPU
+// powerNeeded_memory = PUE_used * (memory * data_dict.refValues_dict['memoryPower'])
+// powerNeeded = powerNeeded_core + powerNeeded_memory
+
+// # Energy needed, in kWh (so dividing by 1000 to convert to kW)
+// energyNeeded_CPU = runTime * powerNeeded_CPU * PSF_used / 1000
+// energyNeeded_GPU = runTime * powerNeeded_GPU * PSF_used / 1000
+// energyNeeded_core = runTime * powerNeeded_core * PSF_used / 1000
+// eneregyNeeded_memory = runTime * powerNeeded_memory * PSF_used / 1000
+// energyNeeded = runTime * powerNeeded * PSF_used / 1000
+
+// powerNeeded_CPU = PUE_used * n_CPUcores * CPUpower * usageCPU_used
 
 // carbon intensity: data/v2.1/CI_aggregated.csv
 // PUE(Power Usage Effectiveness): data/v2.1/default_PUE.csv
@@ -36,13 +52,47 @@ let defaultValues = {
 
 exports.get_carbon = async (req, res) => {
     try {
-        let bodyData = req.body;
-        // let userCode = bodyData.code;
-
         // let carbonIntensity = await getCarbonIntensityData();
-        getPUE();
+        // let PUE = getPUE();
+        // let PSF = 1;
+
+        console.log("==================================\n");
+        // console.log(req);
+        console.log("==================================\n");
+        // console.log(req.body);  
+        // let bodyData = req.body;
+        // let userCode = JSON.parse(bodyData.code);
+        // let escapedUserCode = JSON.parse(userCode); 
+        // let testPost = {
+        //     "code": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World\");\n    }\n}",
+        // };
+        // res.status(200).send(JSON.stringify(testPost));
         
-        res.status(200).send("test");
+        // Save user code to a temporary Java file
+        // fs.writeFileSync('UserJavaCode.java', `{"code": ${userCode}}`);
+        // fs.writeFileSync('UserJavaCode.java', userCode);
+
+        // Compile the user's Java code
+        exec('javac UserJavaCode.java', (compileError, compileStdout, compileStderr) => {
+            if (compileError) {
+                console.error(`Compilation Error: ${compileError}`);
+                return res.status(500).json({ error: 'Failed to compile Java code' });
+            }
+
+            // Execute the compiled Java code
+            exec('java UserJavaCode', (runError, runStdout, runStderr) => {
+            if (runError) {
+                console.error(`Execution Error: ${runError}`);
+                return res.status(500).json({ error: 'Failed to execute Java code' });
+            }
+
+            // Parse and return the output
+            const output = runStdout.trim();
+            res.json({ result: JSON.stringify(output)});
+            });
+        });
+
+        // res.status(200).send("test");
         
     } catch (err) {
         console.log(err);

@@ -18,6 +18,7 @@
   "homepage": "https://github.com/Sunwoo0110/Express_Setup#readme",
   "dependencies": {
     "body-parser": "^1.20.0",
+    "child-process": "^1.0.2",
     "cors": "^2.8.5",
     "dotenv": "^16.0.1",
     "express": "^4.18.1",
