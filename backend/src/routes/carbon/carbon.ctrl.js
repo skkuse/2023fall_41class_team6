@@ -39,28 +39,16 @@ exports.get_carbon = async (req, res) => {
         let bodyData = req.body;
         // let userCode = bodyData.code;
 
-        let carbonIntensity = await getCarbonIntensityData();
+        // let carbonIntensity = await getCarbonIntensityData();
+        getPUE();
         
-        res.status(200).send(await getCarbonIntensityData());
+        res.status(200).send("test");
         
     } catch (err) {
         console.log(err);
         res.send("error");
     }
 };
-
-exports.get_server_loc = async (req, res) => {
-    try {
-        const locationInfo = await fetch(`https://api.ip.pe.kr/json/`);
-        const locationData = await locationInfo.json();
-        const countryCode = locationData.country_code;
-        
-        res.status(200).send(countryCode);
-    } catch (err) {
-        console.log(err);
-        res.send("error");        
-    }
-}
 
 async function getCarbonIntensityData() {
     const filePath = path.join(__dirname, '../../data/CI_aggregated.csv');
@@ -111,4 +99,30 @@ async function getCurLocation() {
     console.log(countryCode);
     
     return countryCode;
-}
+};
+
+function getPUE() {
+    let provider = process.env.PROVIDER;
+    if (!provider)
+        provider = 'Unknown';
+    console.log("==================================\n");
+    console.log(provider);
+
+    // 데이터 로드
+    const filePath = path.join(__dirname, '../../data/defaults_PUE.csv');
+    const pueContent = fs.readFileSync(filePath, 'utf8');
+    const pueLines = pueContent.split('\n').slice(1); // 헤더 행 제외
+
+    // 필요한 데이터 추출
+    const pueDefault_dict = {};
+
+    pueLines.forEach((line) => {
+        const [provider, pue] = line.split(',');
+        pueDefault_dict[provider] = parseFloat(pue);
+    });
+
+    console.log(pueDefault_dict);
+    console.log(pueDefault_dict[provider]);
+    
+    return pueDefault_dict[provider];
+};
