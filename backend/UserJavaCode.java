@@ -1,12 +1,15 @@
-import java.util.Scanner;
+class Test {
+	int field1;
+	String field2;
 
-public class UserJavaCode {
-    public static void main(String[] args) {
-        int number = 5;
-        // Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter a number: ");
-        // int number = scanner.nextInt();
-        int square = number * number;
-        System.out.println("The square of the number is: " + square);
-    }
+	public void method1() {
+		System.out.println("자바 프로그래밍!!");
+	}
+}
+
+public class ttt {
+	public static void main(String[] args) {
+		Test myTest = new Test();
+		myTest.method1();
+	}
 }

@@ -5,6 +5,9 @@ const fetch = require('node-fetch');
 var ip = require("ip");
 const { exec } = require('child_process');
 const { use } = require(".");
+const { pid, cpuUsage, cwd, arch, memoryUsage, ppid } = require('node:process');
+const os = require('os');
+
 
 // Carbonfootprint=energyneeded×carbonintensity
 // energy needed = runtime × (power draw for cores × usage + power draw for memory) × PUE ×PSF
@@ -57,38 +60,86 @@ exports.get_carbon = async (req, res) => {
         // let PSF = 1;
 
         console.log("==================================\n");
+        const numCores = os.cpus().length;
+        const memory = os.totalmem();
+        console.log(numCores);
+        console.log(memory);
+        console.log(pid);
+        console.log(process.cpuUsage());
+        console.log(`Current directory: ${cwd()}`);
+        console.log(`This processor architecture is ${arch}`);
+        console.log(memoryUsage());
+
         // console.log(req);
         console.log("==================================\n");
         // console.log(req.body);  
-        // let bodyData = req.body;
-        // let userCode = JSON.parse(bodyData.code);
+        let bodyData = req.body;
+        let userCode = bodyData.code;
+        // 정규 표현식을 사용하여 클래스 이름 추출
+        const classNameMatch = userCode.match(/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/);
+
+        if (!classNameMatch || classNameMatch.length < 2) {
+            return res.status(400).json({ error: 'Failed to extract class name from Java code' });
+        }
+
+        // 추출한 클래스 이름
+        const userClassName = classNameMatch[1];
+
+        // .java 파일명 생성
+        const javaFileName = `${userClassName}.java`;
+
+
+
         // let escapedUserCode = JSON.parse(userCode); 
-        // let testPost = {
-        //     "code": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World\");\n    }\n}",
-        // };
+        let testPost = {
+            "code": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World\");\n    }\n}",
+        };
         // res.status(200).send(JSON.stringify(testPost));
         
         // Save user code to a temporary Java file
         // fs.writeFileSync('UserJavaCode.java', `{"code": ${userCode}}`);
         // fs.writeFileSync('UserJavaCode.java', userCode);
+        fs.writeFileSync(javaFileName, userCode);
+
+        const startTime = process.hrtime();
 
         // Compile the user's Java code
-        exec('javac UserJavaCode.java', (compileError, compileStdout, compileStderr) => {
+        exec(`javac ${javaFileName}`, (compileError, compileStdout, compileStderr) => {
             if (compileError) {
                 console.error(`Compilation Error: ${compileError}`);
                 return res.status(500).json({ error: 'Failed to compile Java code' });
             }
 
             // Execute the compiled Java code
-            exec('java UserJavaCode', (runError, runStdout, runStderr) => {
-            if (runError) {
-                console.error(`Execution Error: ${runError}`);
-                return res.status(500).json({ error: 'Failed to execute Java code' });
-            }
+            exec(`java ${userClassName}`, (runError, runStdout, runStderr) => {
+                if (runError) {
+                    console.error(`Execution Error: ${runError}`);
+                    return res.status(500).json({ error: 'Failed to execute Java code' });
+                }
 
-            // Parse and return the output
-            const output = runStdout.trim();
-            res.json({ result: JSON.stringify(output)});
+                // 종료 시간 기록
+                const endTime = process.hrtime(startTime);
+                // 실행 시간 계산 (밀리초 단위)
+                const executionTimeInMilliseconds = (endTime[0] * 1000 + endTime[1] / 1e6);
+                // 실행 시간을 시간 단위로 환산
+                const executionTimeInHours = (executionTimeInMilliseconds / 3600000);
+                let runTime = executionTimeInHours;
+
+
+                console.log("mili  ", executionTimeInMilliseconds);
+                console.log("hour   ",executionTimeInHours)
+
+                // Parse and return the output
+                console.log(runStdout);
+                console.log(`Output: ${parseFloat(runStdout)}`);
+                console.log(`Current directory: ${cwd()}`);
+                console.log(pid);
+                console.log(runStdout);
+                console.log(memoryUsage());
+
+
+                const output = runStdout.trim();
+                res.json({ result: output});
             });
         });
 
