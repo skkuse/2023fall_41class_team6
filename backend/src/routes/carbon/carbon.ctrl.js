@@ -143,6 +143,30 @@ exports.get_carbon = async (req, res) => {
     }
 };
 
+exports.get_ranking = async (req, res) => {
+    try {
+        let sql = `
+            SELECT tb_user.name, tb_carbon.carbon_emission
+            FROM team6.tb_user
+            INNER JOIN team6.tb_carbon
+            ON tb_user.id = tb_carbon.user_id
+            ORDER BY tb_carbon.carbon_emission ASC
+            LIMIT 5;
+        `;
+        db.query(sql, function (err, result) {
+            if (err) {
+                console.log("query is not executed: " + err);
+                res.send("error");
+            } else {
+                res.status(200).send(result);
+            }
+        });
+    } catch (err) {
+        console.log(err);
+        res.send("error");
+    }
+};
+
 async function setVariablesVal() {
     carbonIntensity = await getCarbonIntensityData();
     PUE = getPUE(provider); 
