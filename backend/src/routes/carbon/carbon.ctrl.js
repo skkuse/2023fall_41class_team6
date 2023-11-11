@@ -1,4 +1,4 @@
-const db = require("../db");
+const db = require("../db")
 const fs = require('fs');
 const path = require('path');
 const fetch = require('node-fetch');
@@ -43,13 +43,16 @@ let CPUpower = 12; // tdp per CPU core
 let usageCPUUsed = 1.0;
 // memory 관련
 let memory = 64;
-let memoryPower = 0.3725; // static (refValues)
-
+let memoryPower = 0.3725; // static (by referenceValues.csv)
+// 기타
+let countryName ='';
+let provider = 'aws'; // AWS 환경일 경우, 'aws'인자로 넘기기
 
 exports.get_carbon = async (req, res) => {
     try {
         let bodyData = req.body;
         let userCode = bodyData.code;
+        let userName = bodyData.user;
 
         // 변수 값 설정
         setVariablesVal();
@@ -76,7 +79,7 @@ exports.get_carbon = async (req, res) => {
             }
 
             // Execute the compiled Java code
-            exec(`java ${userClassName}`, (runError, runStdout, runStderr) => {
+            exec(`java ${userClassName}`, async (runError, runStdout, runStderr) => {
                 if (runError) {
                     console.error(`Execution Error: ${runError}`);
                     return res.status(500).json({ error: 'Failed to execute Java code' });
@@ -93,29 +96,44 @@ exports.get_carbon = async (req, res) => {
                 runTime = executionTimeInHours;
 
                 let output = runStdout.trim();
+
+                // calculating carbonEmission
                 let powerNeededCPU = PUE * nCPUcores * CPUpower * usageCPUUsed;
                 let powerNeededMemory = PUE * memory * memoryPower;
                 let powerNeeded = powerNeededCPU + powerNeededMemory;
                 let energyNeeded = runTime * powerNeeded * PSF / 1000;
-                let carbonEmmision = energyNeeded * carbonIntensity;
+                let carbonEmission = energyNeeded * carbonIntensity;
 
-                console.log("=====================================");
-                console.log(process.env)
-                console.log("carbonIntensity: ", carbonIntensity);
-                console.log("PUE: ", PUE);
-                console.log("nCPUcores: ", nCPUcores);
-                console.log("CPUpower: ", CPUpower);
-                console.log("usageCPUUsed: ", usageCPUUsed);
-                console.log("memory: ", memory);
-                console.log("memoryPower: ", memoryPower);
-                console.log("PSF: ", PSF);
-                console.log("runTime: ", runTime);            
-                console.log("energyNeeded: ", energyNeeded);
-                console.log("carbonEmmision: ", carbonEmmision);
-                console.log("=====================================\n\n");
-
-                res.status(200).send({ 
-                    carbonEmmision: carbonEmmision,
+                // inserting data into DB
+                let sql = `
+                    INSERT INTO team6.tb_carbon
+                        (user_id, carbon_emission, code, core_num, cpu_power, cpu_usage, memory, memory_power, location, runtime, PUE, PSF, carbon_intensity, provider)
+                    VALUES (
+                        (SELECT id FROM team6.tb_user WHERE tb_user.name = "${userName}"),
+                        ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+                    );
+                `;
+                let sqlVal = [carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
+                db.query(sql, sqlVal, function (err, result) {
+                    if (err) {
+                        console.log("query is not executed: " + err);
+                        res.send("error");
+                    } else {
+                        res.status(200).send({ 
+                            carbonEmission: carbonEmission,
+                            nCPUcores: nCPUcores,
+                            CPUpower: CPUpower,
+                            usageCPUUsed: usageCPUUsed,
+                            memory: memory,
+                            memoryPower: memoryPower,
+                            countryName: countryName,
+                            runTime: runTime,
+                            PUE: PUE,
+                            PSF: PSF,
+                            carbonIntensity: carbonIntensity,
+                            provider: provider,
+                        });
+                    }
                 });
             });
         });        
@@ -127,7 +145,7 @@ exports.get_carbon = async (req, res) => {
 
 async function setVariablesVal() {
     carbonIntensity = await getCarbonIntensityData();
-    PUE = getPUE('aws'); // AWS 환경일 경우, 'aws'인자로 넘기기
+    PUE = getPUE(provider); 
     nCPUcores = os.cpus().length;
     let cpuUsage = os.cpus().map(core => {
         let { user, sys, idle } = core.times;
@@ -175,7 +193,8 @@ async function getCarbonIntensityData() {
     const locationVar = await getCurLocation().then((res) => res);
     // Access carbonIntensity from CI_dict_byLoc
     const carbonIntensity = cI_dict_byLoc[locationVar].carbonIntensity;
-    
+    countryName = cI_dict_byLoc[locationVar].countryName;
+
     return Promise.resolve(carbonIntensity);
 };
 
