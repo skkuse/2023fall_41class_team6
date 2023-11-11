@@ -106,6 +106,10 @@ exports.get_carbon = async (req, res) => {
 
                 // inserting data into DB
                 let sql = `
+                    INSERT INTO team6.tb_user (name)
+                    VALUES (?)
+                    ON DUPLICATE KEY UPDATE name = name;          
+
                     INSERT INTO team6.tb_carbon
                         (user_id, carbon_emission, code, core_num, cpu_power, cpu_usage, memory, memory_power, location, runtime, PUE, PSF, carbon_intensity, provider)
                     VALUES (
@@ -113,7 +117,7 @@ exports.get_carbon = async (req, res) => {
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                     );
                 `;
-                let sqlVal = [carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
+                let sqlVal = [userName, carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
                 db.query(sql, sqlVal, function (err, result) {
                     if (err) {
                         console.log("query is not executed: " + err);

@@ -1,20 +1,3 @@
-// const dotenv = require("dotenv");
-// const config = require('../config/config');
-// const mysql = require('mysql2');
-
-// dotenv.config(); //LOAD CONFIG
-
-// const connection = mysql.createConnection(config);
-
-// try {
-//     connection.connect();
-//     console.log("[server] DB connection is sucessfull")
-// } catch (e) {
-//     console.error(e);
-// }
-
-// module.exports = connection
-
 const mysql = require('mysql')
 const dotenv = require('dotenv');
 dotenv.config();
@@ -25,7 +8,8 @@ const db = mysql.createConnection({
     user: DB_USER,
     password: DB_PASSWORD,
     database: DB_DATABASE,
-    port: PORT
+    port: PORT,
+    multipleStatements : true,
   });
   
 db.connect(function (err) {
