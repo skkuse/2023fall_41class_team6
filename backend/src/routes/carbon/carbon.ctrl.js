@@ -97,6 +97,9 @@ exports.get_carbon = async (req, res) => {
 
                 let output = runStdout.trim();
 
+                fs.unlinkSync(javaFileName);
+                fs.unlinkSync(`${userClassName}.class`);
+
                 // calculating carbonEmission
                 let powerNeededCPU = PUE * nCPUcores * CPUpower * usageCPUUsed;
                 let powerNeededMemory = PUE * memory * memoryPower;
