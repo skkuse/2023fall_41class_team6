@@ -4,10 +4,15 @@ const path = require('path');
 const fetch = require('node-fetch');
 var ip = require("ip");
 const { exec } = require('child_process');
-const { use } = require(".");
 const { pid, cpuUsage, cwd, arch, memoryUsage, ppid } = require('node:process');
 const os = require('os');
 
+// carbonEmissions = carbonIntensity * (
+// 	runTime * (
+// 		(PUE_used * n_CPUcores * CPUpower * usageCPU_used) #powerNeeded_core(powerNeeded_CPU)
+// 		+ ( PUE_used * (memory * data_dict.refValues_dict['memoryPower']) ) #powerNeeded_memory
+// 	) * PSF_used / 1000
+// )
 
 // Carbonfootprint=energyneeded×carbonintensity
 // energy needed = runtime × (power draw for cores × usage + power draw for memory) × PUE ×PSF
@@ -31,74 +36,73 @@ const os = require('os');
 // PSF(Pragmatic Scaling Factor): blob/master/app.py#L399 --> default 1
 
 let defaultValues = {
-    runTime_hour: 12,
-    runTime_min: 0,
-    coreType: 'CPU',
-    numberCPUs: 12,
+    runTime: 0,
+    nCPUCores: 12,
     CPUmodel: 'Xeon E5-2683 v4',
     tdpCPU: 12,
-    numberGPUs: 1,
-    GPUmodel: 'NVIDIA Tesla V100',
-    tdpGPU: 200,
     memory: 64,
-    platformType: 'localServer',
-    provider: 'gcp',
-    usageCPUradio: 'No',
     usageCPU: 1.0,
-    usageGPUradio: 'No',
-    usageGPU: 1.0,
-    PUEradio: 'No',
-    PSFradio: 'No',
     PSF: 1,
+    memory: 64,
+    memoryPower: 0.3725,
+    carbonIntensity: 0.0,
+    PUE: 1.0,
 };
-
 
 exports.get_carbon = async (req, res) => {
     try {
-        // let carbonIntensity = await getCarbonIntensityData();
-        // let PUE = getPUE();
-        // let PSF = 1;
+        let bodyData = req.body;
+        let userCode = bodyData.code;
+
+        let carbonIntensity = await getCarbonIntensityData();
+        let PUE = getPUE();
+        let PSF = 1;
+
+        // 사용 변수 정리
+        // CPU 관련
+        let nCPUcores = 1;
+        let CPUpower = 12;
+        let usageCPUUsed = 1.0;
+        
+        nCPUcores = os.cpus().length;
+        let cpuUsage = os.cpus().map(core => {
+            let { user, sys, idle } = core.times;
+            let total = user + sys + idle;
+            let usage = (user + sys) / total;
+            return usage;
+          });
+        let averageUsage = cpuUsage.reduce((acc, value) => acc + value, 0) / cpuUsage.length;
+        usageCPUUsed = averageUsage;
+        // Memory 관련
+        let memory = 64;
+        let memoryPower = 0.3725;
+
+        memory = os.totalmem()/(1024**3);
 
         console.log("==================================\n");
-        const numCores = os.cpus().length;
-        const memory = os.totalmem();
-        console.log(numCores);
-        console.log(memory);
-        console.log(pid);
+        // console.log('CPU Usage:', cpuUsage);
+        console.log('Average CPU Usage:', averageUsage);
+
+        // console.log(os.cpus());
+        
+        console.log(os.totalmem()/(1024**3));
+        // console.log(pid);
         console.log(process.cpuUsage());
-        console.log(`Current directory: ${cwd()}`);
+        // console.log(`Current directory: ${cwd()}`);
         console.log(`This processor architecture is ${arch}`);
         console.log(memoryUsage());
 
-        // console.log(req);
         console.log("==================================\n");
-        // console.log(req.body);  
-        let bodyData = req.body;
-        let userCode = bodyData.code;
+
         // 정규 표현식을 사용하여 클래스 이름 추출
         const classNameMatch = userCode.match(/public\s+class\s+([A-Za-z_][A-Za-z0-9_]*)/);
-
         if (!classNameMatch || classNameMatch.length < 2) {
             return res.status(400).json({ error: 'Failed to extract class name from Java code' });
         }
-
         // 추출한 클래스 이름
         const userClassName = classNameMatch[1];
-
-        // .java 파일명 생성
+        // .java 파일명 생성 및 파일 생성
         const javaFileName = `${userClassName}.java`;
-
-
-
-        // let escapedUserCode = JSON.parse(userCode); 
-        let testPost = {
-            "code": "public class HelloWorld {\n    public static void main(String[] args) {\n        System.out.println(\"Hello, World\");\n    }\n}",
-        };
-        // res.status(200).send(JSON.stringify(testPost));
-        
-        // Save user code to a temporary Java file
-        // fs.writeFileSync('UserJavaCode.java', `{"code": ${userCode}}`);
-        // fs.writeFileSync('UserJavaCode.java', userCode);
         fs.writeFileSync(javaFileName, userCode);
 
         const startTime = process.hrtime();
@@ -125,26 +129,16 @@ exports.get_carbon = async (req, res) => {
                 const executionTimeInHours = (executionTimeInMilliseconds / 3600000);
                 let runTime = executionTimeInHours;
 
-
                 console.log("mili  ", executionTimeInMilliseconds);
                 console.log("hour   ",executionTimeInHours)
 
-                // Parse and return the output
-                console.log(runStdout);
-                console.log(`Output: ${parseFloat(runStdout)}`);
-                console.log(`Current directory: ${cwd()}`);
-                console.log(pid);
-                console.log(runStdout);
-                console.log(memoryUsage());
-
-
                 const output = runStdout.trim();
-                res.json({ result: output});
+                res.json({ 
+                    result: output,
+                    carbonEmmision: carbonIntensity*runTime*(PUE*nCPUcores*CPUpower*usageCPUUsed+PUE*(memory*memoryPower)*PSF/1000)
+                });
             });
-        });
-
-        // res.status(200).send("test");
-        
+        });        
     } catch (err) {
         console.log(err);
         res.send("error");
@@ -227,3 +221,23 @@ function getPUE() {
     
     return pueDefault_dict[provider];
 };
+
+function getCPUInfo(callback) {
+    exec('lscpu', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`Error executing lscpu: ${error}`);
+        return callback(null);
+      }
+  
+      const lines = stdout.split('\n');
+      const tdpLine = lines.find(line => line.includes('TDP'));
+  
+      if (tdpLine) {
+        const tdpMatch = tdpLine.match(/(\d+)\s+W/);
+        const tdp = tdpMatch ? parseInt(tdpMatch[1]) : null;
+        callback(tdp);
+      } else {
+        callback(null);
+      }
+    });
+  }
