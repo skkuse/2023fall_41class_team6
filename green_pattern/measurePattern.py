@@ -5,11 +5,11 @@ import warnings
 
 warnings.filterwarnings("ignore", category=DeprecationWarning) 
 
-# ##################### USAGE ###################### #
-#                                                    #
-# > python ./measureRuntim.py [dir name] [average N] #
-#                                                    #
-# ################################################## #
+# ##################### USAGE ####################### #
+#                                                     #
+# > python ./measurePattern.py [dir name] [average N] #
+#                                                     #
+# ################################################### #
 
 # to do
 # usage 측정필요
