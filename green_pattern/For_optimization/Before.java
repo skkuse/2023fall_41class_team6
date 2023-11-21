@@ -3,7 +3,6 @@ import java.util.stream.IntStream;
 
 public class Before {
     public static void main(String[] args) {
-    long begin = System.currentTimeMillis();
     long sum = 0;
 
     for(int k = 0 ; k < 100 ; k++){
