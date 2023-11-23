@@ -27,7 +27,7 @@ public class After {
             case 7:
                 day = "Saturday";
                 break;    
-            // ... 다른 요일에 대한 처리 ...
+
             default:
                 day = "Unknown";
         }

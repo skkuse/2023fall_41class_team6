@@ -5,7 +5,7 @@ public class After {
             int n = 1000000;
             double base =3.0;
             for (int i = 0; i < n; i++) {
-                double result = base^i;
+                // double result = base^i;
             }
         }
     }

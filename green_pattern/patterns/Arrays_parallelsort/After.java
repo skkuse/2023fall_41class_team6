@@ -8,7 +8,7 @@ public class After {
 	        int[] data = new int[1000000];
 	        Random random = new Random();
 
-        // 배열에 무작위 값 채우기
+
 	        for (int i = 0; i < data.length; i++) {
 	            data[i] = random.nextInt(1000000);
 	        }

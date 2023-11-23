@@ -11,7 +11,7 @@ public class After {
                 hashMap.put("Bob", 30);
                 hashMap.put("Eve", 22);
 
-        // 키 순서대로 출력
+
                 for (Map.Entry<String, Integer> entry : hashMap.entrySet()) {
                     System.out.println(entry.getKey() + ": " + entry.getValue());
                 }

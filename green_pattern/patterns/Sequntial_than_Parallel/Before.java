@@ -15,7 +15,7 @@ public class Before {
         List<Integer> evenSquares = numbers.stream()
                 .filter(number -> number % 2 == 0)
                 .map(number -> number * number)
-                .collect(Collectors.toList())
+                .collect(Collectors.toList());
         evenSquares.stream().limit(10).forEach(System.out::println);
         }
     }

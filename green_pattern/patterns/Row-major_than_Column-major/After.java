@@ -10,7 +10,6 @@ public class After {
         Random random = new Random();
 
 
-        // 배열에 값 할당
         for (int i = 0; i < rows; i++) {
             for (int k = 0; k < cols; k++) {
                 array[i][k] = random.nextInt(100);

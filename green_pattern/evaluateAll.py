@@ -12,6 +12,7 @@ patterns = [f for f in listdir("./patterns/") if not isfile(join("./patterns/", 
 
 for dir_name in patterns:
     # measure Before.java execution time
+
     bef_execution_time = 0
     start_time = time.perf_counter()
     execution_result = subprocess.run(["java", "-jar", "before.jar"], capture_output=True, cwd=f'./patterns/{dir_name}')

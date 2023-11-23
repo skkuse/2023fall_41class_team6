@@ -7,13 +7,12 @@ patterns = [f for f in listdir("./patterns/") if not isfile(join("./patterns/", 
 
 for dir_name in patterns:
     srcfiles = listdir(f"./patterns/{dir_name}")
-    srcfiles.remove("After.java")
-    srcfiles.remove("Before.java")
-    srcfiles.remove("After.class")
-    srcfiles.remove("Before.class")
-    srcfiles.remove("after.jar")
-    srcfiles.remove("before.jar")
 
+    rmfiles = ["After.java", "Before.java", "After.class", "Before.class", "after.jar", "before.jar"]
+    for file in rmfiles:
+        if file in srcfiles:
+            srcfiles.remove(file)
+            
     bef_compression_result = subprocess.run(["jar", "cfe", "before.jar", "Before", "Before.class", *srcfiles], capture_output=True, cwd=f'./patterns/{dir_name}')
     aft_compression_result = subprocess.run(["jar", "cfe", "after.jar",  "After",  "After.class", *srcfiles], capture_output=True, cwd=f'./patterns/{dir_name}')
     try:
