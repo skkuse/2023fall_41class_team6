@@ -1,22 +1,21 @@
-import java.util.Random;
 public class Before {
     public static String testFirstNumSSN(int a){
         if(a == 0){
-            return "female";           //this means male
+            return "gender_female";           //this means male
         }else{
-            return "male";           //this means female
+            return "gender_male";           //this means female
         }
     }
     public static void main(String[] args){
-        int iterations = 1000000;
-        Random random = new Random();
-        for(int i=0; i<iterations; i++){
-            int a = random.nextInt(2);
-            String result = testFirstNumSSN(a);
-            if(result.equals("female")){
-                System.out.println("this is female");
-            }else if(result.equals("male")){
-                System.out.println("this is male");
+        long iterations = 2000000000;
+        int a = 0;
+        String result = ""; 
+        result = testFirstNumSSN(a);
+        for(long i=0; i<iterations; i++){
+            if(result == "gender_female"){
+                // System.out.println("this is female");
+            }else if(result == "gender_male"){
+                // System.out.println("this is male");
             }
         }
     }

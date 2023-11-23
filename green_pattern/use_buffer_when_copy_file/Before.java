@@ -4,7 +4,9 @@ public class Before {
 
     public static void main(String[] args) {
         try {
-            FileInputStream in = new FileInputStream("input.txt");
+            InputStream inputStream = Before.class.getResourceAsStream("input.txt");
+
+            BufferedInputStream in = new BufferedInputStream(inputStream);
             FileOutputStream out = new FileOutputStream("output.txt");
             int c;
 

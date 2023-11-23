@@ -1,12 +1,22 @@
 import java.util.Random;
 public class Before {
+    public static boolean test(int num, boolean flag){
+        System.out.println("This test takes time...");
+        System.out.println("This print is for taking time");
+        System.out.println("This test takes time...");
+
+        if(num%777==0) return !flag;
+        return flag;
+    }
     public static void main(String[] args){
         Random random = new Random();
-        int randA = random.nextInt(100);
-        int randB = random.nextInt(100);
-        for(int i=0; i<10000; i++){
-            if(randA%2==1 && randB==77){
-                System.out.println("randA is odd and randB is 77");       
+        int randA = random.nextInt(10000);
+        int randB = random.nextInt(10000);
+
+        int iterations = 200000;
+        for(int i=0; i<iterations; i++){
+            if(test(randA, true) && test(randB, false)){
+                // System.out.println("randA is odd and randB is 77");       
             }
         }
     }

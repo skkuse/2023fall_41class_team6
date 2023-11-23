@@ -1,15 +1,14 @@
 import java.util.HashMap;
 import java.util.Map;
 
-public class Before {
+public class After {
     public static void main(String[] args) {
         int iterations = 1000000;
         for(int iter=0; iter<iterations; iter++){
-            int n = 20;
+            int n = 500;
             if (n <= 1) {
                 System.out.println(n);
             }
-
             long prev = 0;
             long current = 1;
             for (int i = 2; i <= n; i++) {
@@ -17,8 +16,9 @@ public class Before {
                 prev = current;
                 current = next;
             }
-
             System.out.println(current);
         }
     }
 }
+
+

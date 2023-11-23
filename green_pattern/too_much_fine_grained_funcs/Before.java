@@ -1,7 +1,7 @@
  public class Before {
     public static void main(String[] args) {
-        int iterations = 1000000;
-        int[] numbers = {1, 2, 3, 4, 5};
+        int iterations = 2147483647;
+        int[] numbers = {1, 2};
         for (int k = 0; k < iterations; k++ ){
             average(numbers);
         }
@@ -17,8 +17,9 @@
         return sum/len;
     }
     private static int average(int[] array) {
+        int sum = 0;
         int len = array.length;
-        int sum = sumAll(array, len);
+        sum = sumAll(array, len);
         return divideBySize(sum, len);
     }
 }

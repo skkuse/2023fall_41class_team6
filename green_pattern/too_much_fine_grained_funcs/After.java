@@ -1,8 +1,8 @@
  public class After {
     public static void main(String[] args) {
-        int iterations = 1000000;
-        int[] numbers = {1, 2, 3, 4, 5};
-        for (int k = 0; k < iterations; k++ ){
+        int iterations = 2147483647;
+        int[] numbers = {1, 2};
+        for (int k = 0; k < iterations; k++){
             average(numbers);
         }
     }

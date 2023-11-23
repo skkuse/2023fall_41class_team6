@@ -1,11 +1,13 @@
 import java.util.Arrays;
 public class After {
     public static void main(String[] args){
-        int intArray[] = new int[10000001];
-
-        for(int index = 0; index < intArray.length; index++) {
-            intArray[index] = index;
+        int iterations = 100000;
+        int intArray[] = new int[iterations];
+        for(int i=1; i<iterations; i++){
+            for(int index = 0; index < iterations; index++) {
+                intArray[index] = index;
+            }
+            // System.out.println(intArray[0]);
         }
-        System.out.println(Arrays.toString(intArray));
     }
 }
