@@ -7,16 +7,9 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)
 
 # ##################### USAGE ####################### #
 #                                                     #
-# > python ./measurePattern.py [dir name] [average N] #
+# > python ./measurePattern.py [dir name]             #
 #                                                     #
 # ################################################### #
-
-# to do
-# usage 측정필요
-# multi processing -> 시간 단축 필요 (popen 활용)
-# 한글 지원
-# 측정을 파일 단위로 할건지 패키지 단위로 할건지 함수단위로 할건지
-# 정해야함
 
 
 if len(sys.argv) < 2:
@@ -28,8 +21,8 @@ avg_n = int(sys.argv[2])  if (len(sys.argv) >= 3) else 1000
 
 
 # compile Before.java and After.java
-bef_compilation_result = subprocess.run(["javac", "Before.java"], capture_output=True, cwd=f'./{dir_name}')
-aft_compilation_result = subprocess.run(["javac", "After.java" ], capture_output=True, cwd=f'./{dir_name}')
+bef_compilation_result = subprocess.run(["javac", "Before.java"], capture_output=True, cwd=f'./patterns/{dir_name}')
+aft_compilation_result = subprocess.run(["javac", "After.java" ], capture_output=True, cwd=f'./patterns/{dir_name}')
 try:
     bef_compilation_result.check_returncode()
     aft_compilation_result.check_returncode()
@@ -46,7 +39,7 @@ except subprocess.CalledProcessError as err:
 bef_execution_time = 0
 for i in range(avg_n):
     start_time = time.perf_counter()
-    execution_result = subprocess.run(["java", "Before"], capture_output=True, cwd=f'./{dir_name}')
+    execution_result = subprocess.run(["java", "Before"], capture_output=True, cwd=f'./patterns/{dir_name}')
     bef_execution_time += (time.perf_counter()-start_time)
     try:
         execution_result.check_returncode()
@@ -62,7 +55,7 @@ bef_execution_time /= avg_n
 aft_execution_time = 0
 for i in range(avg_n):
     start_time = time.perf_counter()
-    execution_result = subprocess.run(["java", "After"], capture_output=True, cwd=f'./{dir_name}')
+    execution_result = subprocess.run(["java", "After"], capture_output=True, cwd=f'./patterns/{dir_name}')
     aft_execution_time += (time.perf_counter()-start_time)
     try:
         execution_result.check_returncode()
