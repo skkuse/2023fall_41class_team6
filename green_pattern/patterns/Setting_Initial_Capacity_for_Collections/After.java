@@ -3,7 +3,7 @@ import java.util.List;
 
 public class After {
     public static void main(String[] args) {
-        int n = 100000;
+        int n = 1000000;
 
 
         List<Integer> list2 = new ArrayList<>(n);
