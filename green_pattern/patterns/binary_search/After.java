@@ -1,4 +1,3 @@
-package green;
 import java.util.ArrayList;
 
 public class After {
