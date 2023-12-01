@@ -107,13 +107,27 @@ exports.get_carbon = async (req, res) => {
                 let energyNeeded = runTime * powerNeeded * PSF / 1000;
                 let carbonEmission = energyNeeded * carbonIntensity;
 
-                //TODO: carbonSample DB 값 불러오기
-                let name = "자동차";
-                let figure = "10";
-                let description = "자동차와 비교했을 때의 탄소배출량";
+                // loading carbon sample data from DB
+                let sampleData = [];
+                let sqlSample = `
+                    SELECT id, name, figure, description
+                    FROM team6.tb_sample;
+                `;
+                await db.query(sqlSample, function (err, result) {
+                    if (err) {
+                        console.log("query is not executed: " + err);
+                        res.send("error");
+                    } else {
+                        console.log(result);
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].figure = result[i].figure * carbonEmission;
+                            sampleData.push(result[i]);
+                        }
+                    }
+                });
 
                 // inserting data into DB
-                let sql = `
+                let sqlInsert = `
                     INSERT INTO team6.tb_carbon
                         (user_id, carbon_emission, code, core_num, cpu_power, cpu_usage, memory, memory_power, location, runtime, PUE, PSF, carbon_intensity, provider)
                     VALUES (
@@ -121,8 +135,8 @@ exports.get_carbon = async (req, res) => {
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                     );
                 `;
-                let sqlVal = [userName, carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
-                db.query(sql, sqlVal, function (err, result) {
+                let sqlInsertVal = [userName, carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
+                db.query(sqlInsert, sqlInsertVal, function (err, result) {
                     if (err) {
                         console.log("query is not executed: " + err);
                         res.send("error");
@@ -142,11 +156,7 @@ exports.get_carbon = async (req, res) => {
                                 carbonIntensity: carbonIntensity,
                                 provider: provider,
                             },
-                            carbonSample: {
-                                name: name,
-                                figure: figure,
-                                description: description,
-                            },
+                            carbonSample: sampleData,
                         });
                     }
                 });
