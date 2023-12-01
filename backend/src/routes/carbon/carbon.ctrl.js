@@ -134,7 +134,7 @@ exports.get_carbon = async (req, res) => {
                         ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
                     );
                 `;
-                let sqlInsertVal = [userName, carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
+                let sqlInsertVal = [carbonEmission, userCode, nCPUcores, CPUpower, usageCPUUsed, memory, memoryPower, countryName, runTime, PUE, PSF, carbonIntensity, provider];
                 db.query(sqlInsert, sqlInsertVal, function (err, result) {
                     if (err) {
                         console.log("query is not executed: " + err);
