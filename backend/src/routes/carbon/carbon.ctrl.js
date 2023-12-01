@@ -116,9 +116,8 @@ exports.get_carbon = async (req, res) => {
                 await db.query(sqlSample, function (err, result) {
                     if (err) {
                         console.log("query is not executed: " + err);
-                        res.send("error");
+                        res.status(400).send("query error");
                     } else {
-                        console.log(result);
                         for (let i = 0; i < result.length; i++) {
                             result[i].figure = result[i].figure * carbonEmission;
                             sampleData.push(result[i]);
@@ -139,7 +138,7 @@ exports.get_carbon = async (req, res) => {
                 db.query(sqlInsert, sqlInsertVal, function (err, result) {
                     if (err) {
                         console.log("query is not executed: " + err);
-                        res.send("error");
+                        res.status(400).send("query error");
                     } else {
                         res.status(200).send({ 
                             carbonEmission: carbonEmission,
@@ -164,7 +163,7 @@ exports.get_carbon = async (req, res) => {
         });        
     } catch (err) {
         console.log(err);
-        res.send("error");
+        res.status(400).send("error");
     }
 };
 
@@ -181,14 +180,14 @@ exports.get_ranking = async (req, res) => {
         db.query(sql, function (err, result) {
             if (err) {
                 console.log("query is not executed: " + err);
-                res.send("error");
+                res.status(400).send("query error");
             } else {
                 res.status(200).send(result);
             }
         });
     } catch (err) {
         console.log(err);
-        res.send("error");
+        res.status(400).send("error");
     }
 };
 
