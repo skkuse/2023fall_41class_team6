@@ -1,0 +1,15 @@
+.headerbox {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 3px;
+    margin: 10px;
+    background-color: #3cb371 ;
+    width: 100%;    
+}
+
+.logincontainer {
+    display: flex;
+    flex-direction: row;
+}
