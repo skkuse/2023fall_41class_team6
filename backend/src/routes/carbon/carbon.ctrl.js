@@ -107,12 +107,13 @@ exports.get_carbon = async (req, res) => {
                 let energyNeeded = runTime * powerNeeded * PSF / 1000;
                 let carbonEmission = energyNeeded * carbonIntensity;
 
+                //TODO: carbonSample DB 값 불러오기
+                let name = "자동차";
+                let figure = "10";
+                let description = "자동차와 비교했을 때의 탄소배출량";
+
                 // inserting data into DB
                 let sql = `
-                    INSERT INTO team6.tb_user (name)
-                    VALUES (?)
-                    ON DUPLICATE KEY UPDATE name = name;          
-
                     INSERT INTO team6.tb_carbon
                         (user_id, carbon_emission, code, core_num, cpu_power, cpu_usage, memory, memory_power, location, runtime, PUE, PSF, carbon_intensity, provider)
                     VALUES (
@@ -128,17 +129,24 @@ exports.get_carbon = async (req, res) => {
                     } else {
                         res.status(200).send({ 
                             carbonEmission: carbonEmission,
-                            nCPUcores: nCPUcores,
-                            CPUpower: CPUpower,
-                            usageCPUUsed: usageCPUUsed,
-                            memory: memory,
-                            memoryPower: memoryPower,
-                            countryName: countryName,
-                            runTime: runTime,
-                            PUE: PUE,
-                            PSF: PSF,
-                            carbonIntensity: carbonIntensity,
-                            provider: provider,
+                            executionServerInfo: {
+                                nCPUcores: nCPUcores,
+                                CPUpower: CPUpower,
+                                usageCPUUsed: usageCPUUsed,
+                                memory: memory,
+                                memoryPower: memoryPower,
+                                countryName: countryName,
+                                runTime: runTime,
+                                PUE: PUE,
+                                PSF: PSF,
+                                carbonIntensity: carbonIntensity,
+                                provider: provider,
+                            },
+                            carbonSample: {
+                                name: name,
+                                figure: figure,
+                                description: description,
+                            },
                         });
                     }
                 });
