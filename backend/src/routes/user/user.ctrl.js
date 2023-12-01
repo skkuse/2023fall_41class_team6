@@ -16,7 +16,7 @@ exports.login = async (req, res) => {
         db.query(sql, sqlVal, function (err, result) {
             if (err) {
                 console.log("query is not executed: " + err);
-                res.send("error");
+                res.status(400).send("query error");
             } else {
                 res.status(200).send(result[1][0]);
             }
@@ -24,6 +24,6 @@ exports.login = async (req, res) => {
     }
     catch (err) {
         console.log(err);
-        res.send("error");
+        res.status(400).send("error");
     }
 }
