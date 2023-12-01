@@ -1,4 +1,7 @@
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const swaggereJsdoc = require("swagger-jsdoc");
+const cors = require('cors');
 
 class App {
     constructor() {
@@ -44,6 +47,35 @@ class App {
             res.status(500).send("Error Code 400");
         });
     }
+
+    setCors() {
+        // this.app.use(cors({orgin: 'http://localhost:3000'}));
+    }
+
+    // setSwagger() {
+    //     const options = {
+    //         definition: {
+    //             openapi: "3.0.0",
+    //             info: {
+    //                 title: "Swagger Express API for Team6",
+    //                 version: "0.1.0",
+    //                 description: "This is a sample server for Team6.",
+    //             },
+    //             servers: [
+    //                 {
+    //                     url: "http://localhost:8080",
+    //                 },
+    //             ],
+    //         },
+    //         apis: ["./src/routes/*.js"],
+    //     };
+    //     const specs = swaggereJsdoc(options);
+    //     this.app.use(
+    //         "/api-docs",
+    //         swaggerUi.serve,
+    //         swaggerUi.setup(specs, { explorer: true })
+    //     );
+    // }
 }
 
 module.exports = new App().app;

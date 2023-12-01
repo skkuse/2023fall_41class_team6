@@ -1,21 +1,24 @@
 /* Test API file */
 
-// const db = require("../db");
+const db = require("../db");
 
-// exports.get_root = (req,res) => {
-//     db.query('SELECT * from test', (error, rows) => {
-//         if (error) {
-//             throw error;
-//         }
-//         console.log(rows);
-//         res.send(rows);
-//     });
-// };
 exports.get_root = async (req,res) => {
     try {
-        res.status(200).send("Helloe World");
+        var sql = "SELECT * FROM team6.tb_user";
+        db.query(sql, function (err, result) {
+            if (err) console.log("query is not excuted: " + err);
+            else res.status(200).send(result);
+        });
     } catch (err) {
         console.log(err);
         res.send("error");
-    }
+    }    
 };
+// exports.get_root = async (req,res) => {
+//     try {
+//         res.status(200).send("Helloe World");
+//     } catch (err) {
+//         console.log(err);
+//         res.send("error");
+//     }
+// };
