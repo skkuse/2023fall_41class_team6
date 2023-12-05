@@ -1,4 +1,7 @@
 const express = require("express");
+const swaggerUi = require("swagger-ui-express");
+const swaggereJsdoc = require("swagger-jsdoc");
+const cors = require('cors');
 
 class App {
     constructor() {
@@ -43,6 +46,10 @@ class App {
         this.app.use((errreq, res, _) => {
             res.status(500).send("Error Code 400");
         });
+    }
+
+    setCors() {
+        // this.app.use(cors({orgin: 'http://localhost:3000'}));
     }
 }
 
