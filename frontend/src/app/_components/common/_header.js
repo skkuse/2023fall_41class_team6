@@ -1,28 +1,28 @@
 "use client";
 
-import React, {use, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Form, Button} from 'react-bootstrap';
 import styles from '../../../styles/common/_header.module.css';
 
 export default function Header(){
     const [isLogin, setIsLogin] = useState(false);
-    const [userId, setUserId] = useState("");   
+    const [userName, setUserName] = useState("");   
 
     function login(){
         // local storage에 저장
         if (typeof window !== 'undefined') {
-            localStorage.setItem('userId', userId);
+            localStorage.setItem('userName', userName);
             setIsLogin(true);
         }
-        console.log(localStorage.getItem('userId'));    
+        console.log(localStorage.getItem('userName'));    
     }
 
     function logout() {
         if (typeof window !== 'undefined') {
-            localStorage.removeItem('userId');
+            localStorage.removeItem('userName');
             setIsLogin(false);
         }
-        console.log(localStorage.getItem('userId'));    
+        console.log(localStorage.getItem('userName'));    
     }
 
     return (
@@ -37,7 +37,7 @@ export default function Header(){
                 <>
                     <Form>
                         <Form.Group className="mb-3">
-                            <Form.Control type="text" onChange={e => setUserId(e.target.value)}/>
+                            <Form.Control type="text" onChange={e => setUserName(e.target.value)}/>
                         </Form.Group>
                     </Form>
                     <Button className="mb-3" variant="success" onClick={() => login()}>Login</Button>

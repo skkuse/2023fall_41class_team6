@@ -6,7 +6,9 @@ import Server from "../_components/main/_server";
 import Coding from "../_components/main/_coding"
 import Ranking from "../_components/main/_ranking";
 import styles from "../../styles/main/Main.module.css";
+
 import { useState } from "react";
+import axios from "axios";
 
 export default function Main() {
 
@@ -35,6 +37,8 @@ export default function Main() {
             /* 탄소 배출량 계산 버튼*/
             console.log("탄소 배출량 계산");
             console.log(code);
+
+            
         }
 
         // else if (action === 'runTestSuite') {
