@@ -25,6 +25,8 @@ class App {
 
     middleware() {
         /* Add your middleware */
+        /* TODO 배포 후 변경 */
+        this.app.use(cors({orgin: 'http://localhost:3000'}));
     }
     
     bodyParsing() {

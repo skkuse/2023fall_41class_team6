@@ -46,7 +46,7 @@ export default function Coding({onInteract}){
     }
 
     return (
-        <div>
+        <div className={styles.codingcontainer}>
         <h1>Coding</h1>
         <div className={styles.codingbox}>
             <div className={styles.border}>
@@ -74,21 +74,18 @@ export default function Coding({onInteract}){
                         <img src="/images/copy.png" alt="file" className={styles.image_button}
                         onClick={() => navigator.clipboard.writeText(editorRef.current.getValue())} />
                     </button>
-                    <button type="button"
+                    {/* <button type="button"
                         style={{ backgroundColor: "#414E5A", color: "white", fontSize: "12px", margin: "2px" }}
-                        onClick={() => interaction('runCode')}>
-                        실행
-                    </button>
+                        onClick={() => initialization('runClear')}>
+                        초기화
+                    </button> */}
+
                     <button type="button"
                         style={{ backgroundColor: "#414E5A", color: "white", fontSize: "12px", margin: "2px" }}
                         onClick={() => interaction('runCarbon')}>
                         탄소 배출량 계산
                     </button>
-                    <button type="button"
-                        style={{ backgroundColor: "#414E5A", color: "white", fontSize: "12px", margin: "2px" }}
-                        onClick={() => initialization('runClear')}>
-                        초기화
-                    </button>
+                    
                 </div>
             </div>
         </div>

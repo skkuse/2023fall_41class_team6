@@ -1,3 +1,14 @@
+.codingcontainer {
+    display: flex;
+    flex-direction: column;
+    width: 70%;
+    height: 0%;
+    flex-grow: 1;
+    /* background: red; */
+    justify-content: center;
+    /* padding: 10px; */
+}
+
 .codingbox {
     display: flex;
     flex-direction: column;

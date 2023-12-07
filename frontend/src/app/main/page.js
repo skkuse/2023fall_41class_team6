@@ -7,7 +7,7 @@ import Coding from "../_components/main/_coding"
 import Ranking from "../_components/main/_ranking";
 import styles from "../../styles/main/Main.module.css";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function Main() {
@@ -15,6 +15,12 @@ export default function Main() {
     const [action, setAction] = useState("init");
     const [code, setCode] = useState("");
     const [baseCode, setBaseCode] = useState("");
+    const [user, setUser] = useState("");
+
+    const [carbonEmission, setCarbonEmission] = useState(0);
+    const [executionServerInfo, setExecutionServerInfo] = useState({});
+    const [carbonSample, setCarbonSample] = useState([]);
+    const [ranking, setRanking] = useState([]);
 
     const submissionHandler = async (action, code) => {
         if (action !== null) {
@@ -22,49 +28,56 @@ export default function Main() {
         }
         setCode(code);
         console.log(action);
-        if (action === 'runCode') {
-            /* 실행 버튼 */
-            console.log("실행");
-            console.log(code);
-            // submit(user_id, assignment, code)
-            //     .then(submission => {
-            //     console.log(`Submission ID: ${submission._id}`);
-            //     // grade(submission._id)
-            // });
-        } 
 
-        else if (action === 'runCarbon') {
+        if (action === 'runCarbon') {
             /* 탄소 배출량 계산 버튼*/
             console.log("탄소 배출량 계산");
             console.log(code);
 
-            
-        }
+            if (localStorage.getItem('userName') == null) {
+                setUser("unknown");
+                console.log(user);
+            } else {
+                setUser(localStorage.getItem('userName'));
+            }
 
-        // else if (action === 'runTestSuite') {
-        //     setTestQueue(testsuite);
-        //     submit(user_id, assignment, code)
-        //         .then(submission => {
-        //         console.log(`Submission ID: ${submission._id}`);
-        //         // grade(submission._id)
-        //         });
-        //     } 
-        // else if (action === 'submit') {
-        //     submit(user_id, assignment, code)
-        //         .then(submission => {
-        //         console.log(`Submission ID: ${submission._id}`);
-        //         // grade(submission._id)
-        //         });
-        // } 
+            let data = {
+                "code": code,
+                "user": user
+            }
+
+            try {
+                const res = await axios.post("http://localhost:8080/carbon", data)
+                console.log(res.data);
+
+                setCarbonEmission(res.data.carbonEmission);
+                setExecutionServerInfo(res.data.executionServerInfo);  
+                setCarbonSample(res.data.carbonSample);
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        setAction("init");
     };
+
+    const getRanking = async () => {
+        const res = await axios.get("http://localhost:8080/carbon/ranking")
+        console.log(res.data);
+
+        setRanking(res.data);
+    };
+
+    useEffect(() => {
+        getRanking();
+    }, [action]);
 
     return (
         <div className={styles.maincontainer}>
             <Header />
-            <Ranking />
-            <Coding onInteract={submissionHandler}/>
-            <Server />
-            <Analysis />
+            <Ranking ranking={ranking}/>
+            <Coding onInteract={submissionHandler} carbonEmission={carbonEmission}/>
+            <Server executionServerInfo={executionServerInfo}/>
+            <Analysis carbonSample={carbonSample}/>
         </div>
         
     )
