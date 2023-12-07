@@ -42,10 +42,14 @@ export default function Main() {
                 console.log(user);
             }
 
+            console.log(code);
+
             let data = {
                 "code": code,
                 "user": user
             }
+
+            console.log(data);
 
             try {
                 await axios.post("http://localhost:8080/carbon", data)
@@ -58,7 +62,7 @@ export default function Main() {
                 console.log(err);
             }
         }
-        // setAction("init");
+        setAction("init");
     };
 
     const getRanking = async () => {
