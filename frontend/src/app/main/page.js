@@ -36,13 +36,13 @@ export default function Main() {
 
             if (localStorage.getItem('userName') == null) {
                 setUser("unknown");
-                console.log(user);
+                // console.log(user);
             } else {
                 setUser(localStorage.getItem('userName'));
-                console.log(user);
+                // console.log(user);
             }
 
-            console.log(code);
+            // console.log(code);
 
             let data = {
                 "code": code,
@@ -63,6 +63,7 @@ export default function Main() {
             }
         }
         setAction("init");
+        setUser(localStorage.getItem('userName'));
     };
 
     const getRanking = async () => {
@@ -72,6 +73,7 @@ export default function Main() {
 
     useEffect(() => {
         getRanking();
+        setUser(localStorage.getItem('userName'));
     }, [action]);
 
     return (
