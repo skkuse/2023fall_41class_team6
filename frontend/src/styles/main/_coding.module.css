@@ -1,0 +1,90 @@
+.codingcontainer {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 0%;
+    flex-grow: 1;
+    /* background: red; */
+    justify-content: center;
+    /* padding: 10px; */
+    /* background-color: aqua; */
+}
+
+.codingheader {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    /* background-color: red; */
+    padding: 5px;
+}
+
+.codingbox {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 450px;
+    /* flex-grow: 1; */
+    background: white;
+}
+
+.border {
+    width: 100%;
+    height: 100%;
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+    /* margin: 0px; */
+    /* background-color: #DFFFE2; */
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    width: fit-content;
+    justify-items: end;
+    /* padding: 10px; */
+    /* background-color: aqua; */
+}
+
+.image_button {
+    width: 30px;
+    height: 30px;
+    filter: opacity(0.4) drop-shadow(0 0 0  #414E5A);
+    /* margin: 5px; */
+}
+
+.codingbox_name {
+    font-size: 20px;
+    font-weight: normal;
+    color: #3cb371;
+    padding: 5px;
+    /* background-color: yellowgreen; */
+    /* text-align: end; */
+}
+
+.carbon_name {
+    font-size: 20px;
+    font-weight: bold;
+    color: #3cb371;
+    padding: 5px;
+    /* background-color: yellowgreen; */
+    /* text-align: end; */
+}
+
+.lineDeco {
+    /* color: red !important; */
+    background-color: #FF818140;
+	/* cursor: pointer;
+	text-decoration: underline;
+	font-weight: bold;
+	font-style: oblique; */
+}
+
+.glyphDeco {
+    /* color: red !important; */
+    background-color: #DFFFE2;
+	/* cursor: pointer;
+	text-decoration: underline;
+	font-weight: bold;
+	font-style: oblique; */
+}

@@ -1,0 +1,10 @@
+.analysiscontainer {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 0%;
+    /* background: red; */
+    justify-content: center;
+    /* padding: 10px; */
+    background-color: aqua;
+}
